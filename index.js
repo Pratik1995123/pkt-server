@@ -70,15 +70,25 @@ app.post('/add_data', async (req, res) => {
 
 app.get('/get_data', async (req, res) => {
   try {
-    const data = await Data.find({});
+    const { date } = req.query;
+    let data;
+
+    if (date) {
+      data = await Data.find({ date: new Date(date) });
+    } else {
+      data = await Data.find({});
+    }
+
     if (data.length === 0) {
       return res.status(404).json({ error: 'No data found' });
     }
+
     return res.status(200).json(data);
   } catch (error) {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 app.post('/get_data', async (req, res) => {
   const { date } = req.body;
